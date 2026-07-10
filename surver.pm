@@ -3,8 +3,10 @@
 package Surver;
 use strict; use warnings;
 use Term::ANSIColor;
+use Exporter 'import';
+use feature 'say';
 
-# some of my 'lc's might be useless
+our @EXPORT_OK = qw(poke pilfer steal brutal brute shriek party shout voice scram interrogate magic);
 
 # argue the string to ask the user
 sub poke {
@@ -21,9 +23,10 @@ sub poke {
 # returns false unless the input is in arguments
 # it would be weird to call pilfer showing the user a message first
 sub pilfer {
+    my $pilferError = ""
     my @arguments = @_;
     chomp(my $input = <STDIN>);
-    grep {$_ eq $input} @arguments or die 'Placeholder error message for pilfer';
+    grep {$_ eq $input} @arguments or die $pilferError;
     return $input;
 }
 
@@ -36,16 +39,21 @@ sub steal {
     return $input;
 }
 
+# since its so vague, heres the difference between pilfer and steal:
+# pilfer will check the input for every argument, and will fail the program if the input isnt recognized
+# steal will just assign the input to the default value (last argument) unless its one of the recognized values.
+
+
 # no arguments
 sub brutal {
-    my $brutalMessage = "Fail: when given a Y/N block user chose N.";
+    my $brutalMessage = "Fail: when given a Y/N block user chose N.\n";
     say 'Approve: Y/N';
     chomp(my $input = lc(<STDIN>));
     $input eq 'y' or die $brutalMessage;
 }
 
 sub brute {
-    my $lessBrutalMessage = "Understood. Ending program. Enjoy your day";
+    my $lessBrutalMessage = "Understood. Ending program. Enjoy your day\n";
     say 'Approve: Y/N';
     chomp(my $input = lc(<STDIN>));
     $input eq 'y' or die $lessBrutalMessage;
@@ -54,28 +62,28 @@ sub brute {
 
 
 # CUSTOM PRINTS:
-sub shriek ($) {
+sub shriek {
     my $string = '! ' . shift;
     say colored($string, "bold red");
 }
 
-sub party ($) {
+sub party {
     my $string = '✓ ' . shift;
     say colored($string, "bold green");
 }
 
-sub shout ($) {
+sub shout {
     my $string = shift;
     say $string;
 }
 
 # voice adds three newlines before and after the statement
-sub voice ($) {
+sub voice {
     my $string = shift;
     say "\n\n\n " . $string . " \n\n\n";
 }
 
-sub scram ($) {
+sub scram {
     my $string = '✕ ' . shift;
     say colored(uc($string), "bold red");
     exit 1;
@@ -89,7 +97,7 @@ sub interrogate {
     do {
         $iterations++;
         chomp(my $input = <STDIN>);
-        last if grep ($_ eq $input) @{$possibleChoices};
+        last if grep {$_ eq $input} @{$possibleChoices};
         say "Fail: the given input is not recognized.";
         say "attempt 10: You have exhausted half of the attempts (10/20)" if $iterations == 10;
         die 'Failed to give a valid input' if $iterations == 20;
